@@ -12,7 +12,7 @@ This Docker image can be run on bare metal Ampere® CPUs and Ampere® based VMs 
 ## Starting container
  
 ```bash
-docker run --name llama -it ghcr.io/amperecomputingai/llama.cpp:latest
+docker run --name llama -it --rm ghcr.io/amperecomputingai/llama.cpp:latest
 ```
 Quick start example will be presented at docker container launch:
  
