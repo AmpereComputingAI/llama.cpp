@@ -6,9 +6,11 @@ Ampere® optimized build of [llama.cpp](
 https://github.com/ggerganov/llama.cpp?tab=readme-ov-file#llamacpp)
 with full support for rich collection of GGUF models available at HuggingFace: [GGUF models](
 https://huggingface.co/models?search=gguf)
- 
+
 This Docker image can be run on bare metal Ampere® CPUs and Ampere® based VMs available in the cloud.
- 
+
+Release notes and binary executables are available on our [GitHub](https://github.com/AmpereComputingAI/llama.cpp/releases)
+
 ## Starting container
  
 ```bash
