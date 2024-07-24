@@ -22,6 +22,31 @@ Quick start example will be presented at docker container launch:
 
 Make sure to visit us at [Ampere Solutions Portal](https://solutions.amperecomputing.com/solutions/ampere-ai)!
 
+## Quantization
+Ampere® optimized build of llama.cpp provides support for two new quantization methods, Q4_K_4 and Q8R16, offering model size and perplexity similar to Q4_K and Q8_0, respectively, but performing up to 1.5-2x faster on inference.
+
+First, you'll need to convert the model to the GGUF format using [this script](https://github.com/ggerganov/llama.cpp/blob/master/convert_hf_to_gguf.py):
+
+```bash
+python3 convert-hf-to-gguf.py [path to the original model] --outtype [f32, f16, bf16 or q8_0] --outfile [output path]
+```
+
+For example:
+
+```bash
+python3 convert-hf-to-gguf.py path/to/llama2 --outtype f16 --outfile llama-2-7b-f16.gguf
+```
+
+Next, you can quantize the model using the following command:
+```bash
+./llama-quantize [input file] [output file] [quantization method]
+```
+
+For example:
+```bash
+./llama-quantize llama-2-7b-f16.gguf llama-2-7b-Q8R16.gguf Q8R16
+```
+
 ## Support
 
 Please contact us at <ai-support@amperecomputing.com>
