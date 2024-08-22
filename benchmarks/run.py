@@ -11,19 +11,18 @@ def get_file_dir():
     return os.path.dirname(os.path.realpath(__file__))
 
 
-def docker_init():
-    tag = "amperecomputingai/llama.cpp:1.2.3"
-    if subprocess.run(
-            ["docker", "pull", tag]).returncode != 0:
-        print("Docker pull process failed!")
-        sys.exit(1)
+def docker_init(docker_image):
+    # if subprocess.run(
+    #        ["docker", "pull", docker_image]).returncode != 0:
+    #    print("Docker pull process failed!")
+    #    sys.exit(1)
     container_name = "llama_benchmark"
     subprocess.run(["docker", "rm", "-f", container_name])
     memory = (psutil.virtual_memory().total >> 30) - 30  # leave 30GB for OS
     assert memory > 10, "less than 10GB of memory available on the system for llama.cpp"
     if subprocess.run(
             ["docker", "run", "--privileged=true", "--name", container_name, "-d", "-m", f"{str(memory)}g", "-v",
-             f"{get_file_dir()}:/runner", "--entrypoint", "/bin/bash", "-it", tag]).returncode != 0:
+             f"{get_file_dir()}:/runner", "--entrypoint", "/bin/bash", "-it", docker_image]).returncode != 0:
         print("Docker run process failed!")
         sys.exit(1)
     return container_name
@@ -52,7 +51,8 @@ def docker_restart(docker_name):
 def benchmark(docker_container_name, args):
     num_available_threads = len(parse_threads_range(args.threads_range))
     if num_available_threads < max(args.num_threads):
-        print(f"Requested number of threads ({max(args.num_threads)}) exceeds threads available ({num_available_threads})")
+        print(
+            f"Requested number of threads ({max(args.num_threads)}) exceeds threads available ({num_available_threads})")
         sys.exit(1)
 
     docker_restart(docker_container_name)
@@ -63,11 +63,11 @@ def benchmark(docker_container_name, args):
                     num_processes = int(num_available_threads / num_threads)
                     case = f"{num_processes} x {num_threads} [proc x threads], bs = {batch_size}"
                     print(f"\nRunning {case}")
-    
+
                     cmd = (f"cd /runner; python3 utils/benchmark.py -m models/{model} -n {str(num_processes)} "
                            f"-t {str(num_threads)} -b {str(batch_size)} -p {str(prompt_size)} -r {args.threads_range}")
                     cmd = ["docker", "exec", "-i", docker_container_name, "bash", "-c", cmd]
-    
+
                     print(f"Executing: {' '.join(cmd)}")
                     success = False
                     start = time.time()
@@ -90,6 +90,9 @@ def parse_args():
     parser.add_argument("-m", "--model_names",
                         type=str, required=True, nargs="+",
                         help="model names, e.g. 'Meta-Llama-3-8B-Instruct.Q8_0.gguf'")
+    parser.add_argument("-d", "--docker_image",
+                        type=str, required=True,
+                        help="Docker image to use for benchmarking")
     parser.add_argument("-t", "--num_threads",
                         type=int, required=True, nargs="+",
                         help="number of threads per process to use")
@@ -111,7 +114,7 @@ def parse_args():
 
 def main():
     args = parse_args()
-    benchmark(docker_init(), args)
+    benchmark(docker_init(args.docker_image), args)
 
 
 if __name__ == "__main__":
