@@ -28,5 +28,21 @@ cd ..
 nohup sudo bash run.sh
 ```
 
-Benchmarks will take few hours in default setting, going over various combinations of n_proc x n_threads x batch_size x prompt_size x model_size 😵‍💫
+Benchmarks will take a moment in default setting.
 After they complete you will find .csv files with results in the benchmarks directory of this repo.
+
+### results on Altra Max with 128 threads on 1 process:
+
+#### Meta-Llama-3-8B-Instruct.Q4_K_4.gguf
+
+| Batch Size | total token generation capability, tps |
+|------------|----------------------------------------|
+| 1          | 26.13                                  |
+| 32         | 102.85                                 |
+
+#### Meta-Llama-3-8B-Instruct.Q8R16.gguf
+
+| Batch Size | total token generation capability, tps |
+|------------|----------------------------------------|
+| 1          | 18.37                                  |
+| 32         | 121.19                                 |
