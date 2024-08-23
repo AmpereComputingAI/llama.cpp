@@ -37,3 +37,15 @@ bash setup_deb.sh  # works on Debian-based systems
 bash download_models.sh  # uncomment preferred models in the file, by default llama3 q8_0 will be downloaded
 bash run.sh  # modify to adjust number of threads available and other parameters
 ```
+
+## Speedup vs unoptimized llama.cpp
+
+|                       | Q4_K_M  | Q4_K_4  | Speedup  |
+|-----------------------|---|---|---|
+|token generation (t/s) |  191.76 | 289.99  | 1.51x  |
+|prompt processing (t/s)|  265.64 | 542.87  | 2.04x  |
+
+|                       | Q8_0  | Q8R16  | Speedup  |
+|-----------------------|---|---|---|
+|token generation (t/s) | 248.17  | 313.78  | 1.26x  |
+|prompt processing (t/s)| 410.90  | 950.64  | 2.31x  |
