@@ -1,4 +1,3 @@
-![Ampere AI](https://ampereaimodelzoo.s3.eu-central-1.amazonaws.com/ampere_logo_®_primary_stacked_rgb.png "Ampere AI")
 # Wrapper for multi-process / batched benchmark of llama.cpp
 
 
@@ -31,18 +30,17 @@ nohup sudo bash run.sh
 Benchmarks will take a moment in default setting.
 After they complete you will find .csv files with results in the benchmarks directory of this repo.
 
-### results on Altra Max with 128 threads on 1 process:
+### results on Altra Max
 
 #### Meta-Llama-3-8B-Instruct.Q4_K_4.gguf
 
-| Batch Size | total token generation capability, tps |
-|------------|----------------------------------------|
-| 1          | 26.13                                  |
-| 32         | 102.85                                 |
+| n_proc | n_threads | batch_size | prompt_size | output_tokens | total token generation capability, tps |
+|--------|-----------|------------|-------------|---------------|----------------------------------------|
+| 16     | 8         | 8          | 128         | 256           | 262.8345921                            |
+
 
 #### Meta-Llama-3-8B-Instruct.Q8R16.gguf
 
-| Batch Size | total token generation capability, tps |
-|------------|----------------------------------------|
-| 1          | 18.37                                  |
-| 32         | 121.19                                 |
+| n_proc | n_threads | batch_size | prompt_size | output_tokens | total token generation capability, tps |
+|--------|-----------|------------|-------------|---------------|----------------------------------------|
+| 10     | 12        | 16         | 128         | 256           | 294.2275261                            |
