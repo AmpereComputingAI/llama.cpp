@@ -36,11 +36,11 @@ After they complete you will find .csv files with results in the benchmarks dire
 
 | n_proc | n_threads | batch_size | prompt_size | output_tokens | total token generation capability, tps |
 |--------|-----------|------------|-------------|---------------|----------------------------------------|
-| 16     | 8         | 8          | 128         | 256           | 262.8345921                            |
+| 16     | 8         | 8          | 128         | 256           | 262.83                                 |
 
 
 #### Meta-Llama-3-8B-Instruct.Q8R16.gguf
 
 | n_proc | n_threads | batch_size | prompt_size | output_tokens | total token generation capability, tps |
 |--------|-----------|------------|-------------|---------------|----------------------------------------|
-| 10     | 12        | 16         | 128         | 256           | 294.2275261                            |
+| 10     | 12        | 16         | 128         | 256           | 294.23                                 |
