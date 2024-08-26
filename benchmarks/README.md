@@ -31,6 +31,7 @@ Benchmarks will take a moment in default setting.
 After they complete you will find .csv files with results in the benchmarks directory of this repo.
 
 ### results on Altra Max
+the results were gathered using amperecomputingai/llama.cpp:1.2.6 image with aio optimizations on an Altra Max.
 
 #### Meta-Llama-3-8B-Instruct.Q4_K_4.gguf
 
