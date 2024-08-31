@@ -1,25 +1,53 @@
-# Running benchmark
+# Wrapper for multi-process / batched benchmark of llama.cpp
 
-This benchmarking tool runs multi-process, throughput-oriented benchmark of Ampere optimized llama.cpp using arbitrary model(s) provided by the user. 
-The benchmarking script spawns multiple parallel streams of token generation using llama.cpp and provides user with aggregate metrics of both prompt eval and token generation stages.
-Underneath, the _batched-bench_ script from upstream llama.cpp project is being used in an unaltered form.
-The script orchestrates the benchmark inside Docker container from the outside environment, **therefore this script should not be run inside Docker container.**
 
-## Setup
-Few dependencies need to be installed first. On Debian-based systems you can use the setup script.
+## ARM
+Instructions assume you have a debian based OS
 ```bash
+cd benchmarks
 sudo bash setup_deb.sh
+# vim download_models.sh # uncomment / add models you want to download
+bash download_models.sh
+# quick run
+sudo python3 run.py -m Meta-Llama-3-8B-Instruct.Q4_K_4.gguf Meta-Llama-3-8B-Instruct.Q8R16.gguf -t 128 -b 1 -p 128 -r 0-127 -d amperecomputingai/llama.cpp:latest
 ```
 
-## Downloading models
-Any GGUF model is expected to work, if you experience troubles running your network of choice please raise an [issue](https://github.com/AmpereComputingAI/llama.cpp/issues/new/choose).
-Benchmarking script expects models to be placed under _**llama.cpp/benchmarks/models**_ dir.
+## x86
+Instructions assume you have a debian based OS
 ```bash
-mkdir -p models
-huggingface-cli download QuantFactory/Meta-Llama-3-8B-Instruct-GGUF Meta-Llama-3-8B-Instruct.Q8_0.gguf --local-dir models --local-dir-use-symlinks False
+cd benchmarks
+sudo bash setup_deb.sh
+# vim download_models.sh # uncomment / add models you want to download
+bash download_models.sh
+
+cd utils
+sudo docker build -t llama_x86 .
+cd ..
+# quick run
+python3 run.py -m Meta-Llama-3-8B-Instruct.Q4_K_M.gguf Meta-Llama-3-8B-Instruct.Q8_0.gguf -t 128 -b 1 -p 128 -r 0-127 -d llama_x86:latest
 ```
 
-## Benchmark
+Benchmarks will take a moment in default setting.
+After they complete you will find .csv files with results in the benchmarks directory of this repo.
+
+### results on Altra Max
+the results were gathered using amperecomputingai/llama.cpp:1.2.6 image with aio optimizations on an Altra Max.
+
+#### Meta-Llama-3-8B-Instruct.Q4_K_4.gguf
+
+| n_proc | n_threads | batch_size | prompt_size | output_tokens | total token generation capability, tps |
+|--------|-----------|------------|-------------|---------------|----------------------------------------|
+| 16     | 8         | 8          | 128         | 256           | 262.83                                 |
+
+
+#### Meta-Llama-3-8B-Instruct.Q8R16.gguf
+
+| n_proc | n_threads | batch_size | prompt_size | output_tokens | total token generation capability, tps |
+|--------|-----------|------------|-------------|---------------|----------------------------------------|
+| 10     | 12        | 16         | 128         | 256           | 294.23                                 |
+
+
+## run.py options
 Provide run.py Python script with following arguments:
 - -m, filename(s) of model(s) that should be available under _**llama.cpp/benchmarks/models**_ directory, multiple models can be provided
 - -t, threadpool(s) per single process, e.g., if there are 20 threads available on the system, if -t 10 is provided, 2 parallel processes will be spawned, each using 10 threads;
@@ -29,11 +57,4 @@ Provide run.py Python script with following arguments:
 - -r, thread-range, e.g., on an 80-thread system, it should be input as 0-79, unless user wants to use just a subset of available threads, say 16-63 (48 threads indexed 16<>63)
 ```bash
 python3 run.py -m Meta-Llama-3-8B-Instruct.Q8_0.gguf -t 10 16 32 40 64 80 -b 1 2 4 8 16 32 64 -p 512 -r 0-79
-```
-
-## Quick run on 80t OCI A1 system
-```bash
-bash setup_deb.sh  # works on Debian-based systems
-bash download_models.sh  # uncomment preferred models in the file, by default llama3 q8_0 will be downloaded
-bash run.sh  # modify to adjust number of threads available and other parameters
 ```
