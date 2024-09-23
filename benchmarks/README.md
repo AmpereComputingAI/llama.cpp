@@ -38,7 +38,7 @@ bash download_models.sh  # uncomment preferred models in the file, by default ll
 bash run.sh  # modify to adjust number of threads available and other parameters
 ```
 
-## Speedup vs unoptimized llama.cpp
+## Speedup Ampere optimized llama.cpp (r1.2.6) vs llama.cpp (b3615)
 
 |                       | Q4_K_M  | Q4_K_4  | Speedup  |
 |-----------------------|---|---|---|
