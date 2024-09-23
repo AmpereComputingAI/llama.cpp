@@ -9,7 +9,7 @@ This Docker image can be run on bare metal Ampere® CPUs and Ampere® based VMs 
 Release notes and binary executables are available on our [GitHub](https://github.com/AmpereComputingAI/llama.cpp/releases)
 
 ## Starting container
-Default entrypoint runs the server binary of llama.cpp, mimicking behavior of original llama.cpp server image: [docker image](https://github.com/ggerganov/llama.cpp/blob/master/.devops/server.Dockerfile)
+Default entrypoint runs the server binary of llama.cpp, mimicking behavior of original llama.cpp server image: [docker image](https://github.com/ggerganov/llama.cpp/blob/master/.devops/llama-server.Dockerfile)
 
 To launch shell instead, do this:
 
