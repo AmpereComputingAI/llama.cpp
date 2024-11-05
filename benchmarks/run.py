@@ -12,7 +12,7 @@ def get_file_dir():
 
 
 def docker_init():
-    tag = "amperecomputingai/llama.cpp:1.2.3"
+    tag = "amperecomputingai/llama.cpp:2.0.0"
     if subprocess.run(
             ["docker", "pull", tag]).returncode != 0:
         print("Docker pull process failed!")

@@ -116,9 +116,19 @@ def main():
     current_subprocesses = list()
     for n in range(args.num_processes):
         logfile = f"{logs_dir}/log_{n}"
-        cmd = ["numactl", f"--physcpubind={gen_threads_config(args.num_threads, n)}",
-               "/llm/batched-bench", args.model, str(args.kv_cache), "2048", "512", "0", "0", "0", str(args.prompt_size), str(TOKENS),
-               str(args.batch_size), str(args.num_threads)]
+        if os.path.exists("/llm/batched-bench"):
+            # command-line for v1
+            cmd = ["numactl", f"--physcpubind={gen_threads_config(args.num_threads, n)}",
+                   "/llm/batched-bench", args.model, str(args.kv_cache), "2048", "512", "0", "0", "0", str(args.prompt_size), str(TOKENS),
+                   str(args.batch_size), str(args.num_threads)]
+        elif os.path.exists("/llm/llama-batched-bench"):
+            # command-line for v2
+            cmd = ["numactl", f"--physcpubind={gen_threads_config(args.num_threads, n)}",
+                   "/llm/llama-batched-bench", "-m", args.model, "-c", str(args.kv_cache), "-b", "2048", "-ub", "512", "-npp", str(args.prompt_size), "-ntg", str(TOKENS),
+                   "-npl", str(args.batch_size), "-t", str(args.num_threads), "-tb", str(args.num_threads), "-td", str(args.num_threads)]
+        else:
+            print("FAIL: batched-bench not found!")
+            sys.exit(1)
         current_subprocesses.append(
             subprocess.Popen(cmd, stdout=open(logfile, 'wb'), stderr=open(logfile, 'wb')))
     start = time.time()
