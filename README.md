@@ -50,7 +50,7 @@ For example:
 ```
 
 ## Benchmark Results
-you can find benchmark results run by us in **benchmarks/example_results** and select results by machine and software.
+Benchmark results conducted by our Team can be found in **benchmarks/example_results**, with data selectable by machine type and software.
 
 ## Support
 
