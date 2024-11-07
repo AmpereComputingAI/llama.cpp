@@ -49,6 +49,9 @@ For example:
 ./llama-quantize llama-2-7b-f16.gguf llama-2-7b-Q8R16.gguf Q8R16
 ```
 
+## Benchmark Results
+Benchmark results conducted by our Team can be found in **benchmarks/example_results**, with data selectable by machine type and software.
+
 ## Support
 
 Please contact us at <ai-support@amperecomputing.com>
