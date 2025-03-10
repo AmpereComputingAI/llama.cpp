@@ -93,8 +93,9 @@ def summarize_results(logs_dir, args, start, finish):
                 ["n_proc", "n_threads", "batch_size", "prompt_size", "output_tokens", "pp_throughput_tps",
                  "pp_avg_latency_sec", "tg_throughput_tps", "tg_avg_latency_sec", "pp+tg_throughput_tps", "concurrency", "start", "finish"])
         writer.writerow(
-            [args.num_processes, args.num_threads, args.batch_size, args.prompt_size, TOKENS, pp_throughput,
-             avg_pp_latency, tg_throughput, avg_tg_latency, avg_total_speed, args.batch_size * args.num_processes, start, finish])
+            [args.num_processes, args.num_threads, args.batch_size, args.prompt_size, TOKENS, f"{pp_throughput:.3f}",
+             f"{avg_pp_latency:.3f}", f"{tg_throughput:.3f}", f"{avg_tg_latency:.3f}", f"{avg_total_speed:.3f}", args.batch_size * args.num_processes, f"{start:.3f}", f"{finish:.3f}"])
+
     print(f"Result saved in {results_filename}")
 
 
@@ -118,12 +119,12 @@ def main():
         logfile = f"{logs_dir}/log_{n}"
         if os.path.exists("/llm/batched-bench"):
             # command-line for v1
-            cmd = ["numactl", f"--physcpubind={gen_threads_config(args.num_threads, n)}",
+            cmd = ["numactl", f"--physcpubind={gen_threads_config(args.num_threads, n)}", "--localalloc",
                    "/llm/batched-bench", args.model, str(args.kv_cache), "2048", "512", "0", "0", "0", str(args.prompt_size), str(TOKENS),
                    str(args.batch_size), str(args.num_threads)]
         elif os.path.exists("/llm/llama-batched-bench"):
             # command-line for v2
-            cmd = ["numactl", f"--physcpubind={gen_threads_config(args.num_threads, n)}",
+            cmd = ["numactl", f"--physcpubind={gen_threads_config(args.num_threads, n)}", "--localalloc",
                    "/llm/llama-batched-bench", "-m", args.model, "-c", str(args.kv_cache), "-b", "2048", "-ub", "512", "-npp", str(args.prompt_size), "-ntg", str(TOKENS),
                    "-npl", str(args.batch_size), "-t", str(args.num_threads), "-tb", str(args.num_threads), "-td", str(args.num_threads)]
         else:

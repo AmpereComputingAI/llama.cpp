@@ -11,18 +11,18 @@ def get_file_dir():
     return os.path.dirname(os.path.realpath(__file__))
 
 
-def docker_init():
+def docker_init(node):
     tag = "amperecomputingai/llama.cpp:2.0.0"
     if subprocess.run(
             ["docker", "pull", tag]).returncode != 0:
         print("Docker pull process failed!")
         sys.exit(1)
-    container_name = "llama_benchmark"
+    container_name = f"llama_benchmark_n{node}"
     subprocess.run(["docker", "rm", "-f", container_name])
     memory = (psutil.virtual_memory().total >> 30) - 30  # leave 30GB for OS
     assert memory > 10, "less than 10GB of memory available on the system for llama.cpp"
     if subprocess.run(
-            ["docker", "run", "--privileged=true", "--name", container_name, "-d", "-m", f"{str(memory)}g", "-v",
+            ["docker", "run", "--privileged=true", "--cpuset-mems", f"{str(node)}", "--name", container_name, "-d", "-m", f"{str(memory)}g", "-v",
              f"{get_file_dir()}:/runner", "--entrypoint", "/bin/bash", "-it", tag]).returncode != 0:
         print("Docker run process failed!")
         sys.exit(1)
@@ -106,12 +106,16 @@ def parse_args():
     parser.add_argument("--timeout",
                         type=float, default=900,
                         help="timeout to apply per single benchmark case")
+    parser.add_argument("-n", "--numa",
+                        type=int, default=0,
+                        help="numa mode of the docker container")
+
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
-    benchmark(docker_init(), args)
+    benchmark(docker_init(args.numa), args)
 
 
 if __name__ == "__main__":
