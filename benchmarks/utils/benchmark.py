@@ -67,7 +67,7 @@ def summarize_results(logs_dir, args, start, finish):
     ttfts = []
     tg_lats = []
     for n in range(args.num_processes):
-        results = open(f"{logs_dir}/log_{n}", "r").readlines()[-9].split("|")
+        results = open(f"{logs_dir}/log_{n}", "r").readlines()[5].split("|")
         prompt_size = int(results[1])
         assert prompt_size == args.prompt_size
         tokens_generated = int(results[2])
@@ -142,11 +142,11 @@ def main():
             if mem_place == "none":
                 cmd = ["numactl", f"--physcpubind={gen_threads_config(args.num_threads, n)}",
                        "/llm/llama-batched-bench", "-m", args.model, "-c", str(args.kv_cache), "-b", "2048", "-ub", "512", "-npp", str(args.prompt_size), "-ntg", str(TOKENS),
-                       "-npl", str(args.batch_size), "-t", str(args.num_threads), "-tb", str(args.num_threads), "-td", str(args.num_threads)]
+                       "-npl", str(args.batch_size), "-t", str(args.num_threads), "-tb", str(args.num_threads)]
             else:
                 cmd = ["numactl", f"--physcpubind={gen_threads_config(args.num_threads, n)}",str(mem_place),
                        "/llm/llama-batched-bench", "-m", args.model, "-c", str(args.kv_cache), "-b", "2048", "-ub", "512", "-npp", str(args.prompt_size), "-ntg", str(TOKENS),
-                       "-npl", str(args.batch_size), "-t", str(args.num_threads), "-tb", str(args.num_threads), "-td", str(args.num_threads)]
+                       "-npl", str(args.batch_size), "-t", str(args.num_threads), "-tb", str(args.num_threads)]
 
         else:
             print("FAIL: batched-bench not found!")
