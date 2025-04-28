@@ -142,11 +142,11 @@ def main():
             if mem_place == "none":
                 cmd = ["numactl", f"--physcpubind={gen_threads_config(args.num_threads, n)}",
                        "/llm/llama-batched-bench", "-m", args.model, "-c", str(args.kv_cache), "-b", "2048", "-ub", "512", "-npp", str(args.prompt_size), "-ntg", str(TOKENS),
-                       "-npl", str(args.batch_size), "-t", str(args.num_threads), "-tb", str(args.num_threads)]
+                       "-npl", str(args.batch_size), "-t", str(args.num_threads), "-tb", str(args.num_threads), "--no-mmap"]
             else:
                 cmd = ["numactl", f"--physcpubind={gen_threads_config(args.num_threads, n)}",str(mem_place),
                        "/llm/llama-batched-bench", "-m", args.model, "-c", str(args.kv_cache), "-b", "2048", "-ub", "512", "-npp", str(args.prompt_size), "-ntg", str(TOKENS),
-                       "-npl", str(args.batch_size), "-t", str(args.num_threads), "-tb", str(args.num_threads)]
+                       "-npl", str(args.batch_size), "-t", str(args.num_threads), "-tb", str(args.num_threads), "--no-mmap"]
 
         else:
             print("FAIL: batched-bench not found!")
