@@ -40,7 +40,7 @@ def parse_args():
                         type=str, default="local",
                         help="memory placement policy, 'local','interleave' or 'none'")
     parser.add_argument("-fa",
-                        type=int, default=0,
+                        type=int, default=0, choices=range(0,2),
                         help="enable flash attention")
     return parser.parse_args()
 

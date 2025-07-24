@@ -114,7 +114,7 @@ def parse_args():
                         type=int, default=0,
                         help="numa mode of the docker container")
     parser.add_argument("-fa",
-                        type=int, default=0,
+                        type=int, default=0, choices=range(0, 2),
                         help="enable flash attention")
 
     return parser.parse_args()
