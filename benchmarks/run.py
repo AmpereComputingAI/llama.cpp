@@ -12,7 +12,7 @@ def get_file_dir():
 
 
 def docker_init(node):
-    tag = "amperecomputingai/llama.cpp:2.2.1"
+    tag = "amperecomputingai/llama.cpp:3.1.2"
     if subprocess.run(
             ["docker", "pull", tag]).returncode != 0:
         print("Docker pull process failed!")
@@ -66,6 +66,10 @@ def benchmark(docker_container_name, args):
     
                     cmd = (f"cd /runner; python3 utils/benchmark.py -m models/{model} -n {str(num_processes)} "
                            f"-t {str(num_threads)} -b {str(batch_size)} -p {str(prompt_size)} -r {args.threads_range}")
+
+                    if args.fa != 0 :
+                        cmd += " -fa 1"
+
                     cmd = ["docker", "exec", "-i", docker_container_name, "bash", "-c", cmd]
     
                     print(f"Executing: {' '.join(cmd)}")
@@ -109,6 +113,9 @@ def parse_args():
     parser.add_argument("-n", "--numa",
                         type=int, default=0,
                         help="numa mode of the docker container")
+    parser.add_argument("-fa",
+                        type=int, default=0, choices=range(0, 2),
+                        help="enable flash attention")
 
     return parser.parse_args()
 
