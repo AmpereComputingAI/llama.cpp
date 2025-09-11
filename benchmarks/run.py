@@ -6,24 +6,23 @@ import argparse
 import subprocess
 from utils.benchmark import parse_threads_range
 
-
 def get_file_dir():
     return os.path.dirname(os.path.realpath(__file__))
 
-
 def docker_init(node):
-    tag = "amperecomputingai/llama.cpp:3.1.2"
-    if subprocess.run(
-            ["docker", "pull", tag]).returncode != 0:
-        print("Docker pull process failed!")
-        sys.exit(1)
+
+    if subprocess.run(["docker", "inspect", docker_image], capture_output=True).returncode != 0:
+        if subprocess.run(["docker", "pull", docker_image]).returncode != 0:
+            print("Docker pull process failed!")
+            sys.exit(1)
+
     container_name = f"llama_benchmark_n{node}"
-    subprocess.run(["docker", "rm", "-f", container_name])
+    subprocess.run(["docker", "rm", "-f", container_name], capture_output=True)
     memory = (psutil.virtual_memory().total >> 30) - 30  # leave 30GB for OS
     assert memory > 10, "less than 10GB of memory available on the system for llama.cpp"
     if subprocess.run(
             ["docker", "run", "--privileged=true", "--cpuset-mems", f"{str(node)}", "--name", container_name, "-d", "-m", f"{str(memory)}g", "-v",
-             f"{get_file_dir()}:/runner", "--entrypoint", "/bin/bash", "-it", tag]).returncode != 0:
+             f"{get_file_dir()}:/runner", "--entrypoint", "/bin/bash", "-it", docker_image],capture_output=True).returncode != 0:
         print("Docker run process failed!")
         sys.exit(1)
     return container_name
@@ -33,13 +32,13 @@ def docker_restart(docker_name):
     break_time = 15
 
     def docker_stop():
-        if subprocess.run(["docker", "stop", docker_name]).returncode != 0:
+        if subprocess.run(["docker", "stop", docker_name], capture_output=True).returncode != 0:
             print(f"Stopping docker container {docker_name} failed, retrying in {break_time} seconds.")
             time.sleep(break_time)
             docker_stop()
 
     def docker_start():
-        if subprocess.run(["docker", "start", docker_name]).returncode != 0:
+        if subprocess.run(["docker", "start", docker_name], capture_output=True).returncode != 0:
             print(f"Starting docker container {docker_name} failed, retrying in {break_time} seconds.")
             time.sleep(break_time)
             docker_start()
@@ -94,6 +93,9 @@ def parse_args():
     parser.add_argument("-m", "--model_names",
                         type=str, required=True, nargs="+",
                         help="model names, e.g. 'Meta-Llama-3-8B-Instruct.Q8_0.gguf'")
+    parser.add_argument("-d", "--docker_image",
+                        type=str, default="amperecomputingai/llama.cpp:latest",
+                        help="Docker image to use for benchmarking")
     parser.add_argument("-t", "--num_threads",
                         type=int, required=True, nargs="+",
                         help="number of threads per process to use")
@@ -121,7 +123,10 @@ def parse_args():
 
 
 def main():
+    global docker_image
+
     args = parse_args()
+    docker_image = args.docker_image
     benchmark(docker_init(args.numa), args)
 
 
