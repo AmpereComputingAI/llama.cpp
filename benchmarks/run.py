@@ -12,7 +12,8 @@ def get_file_dir():
 def docker_init(node):
 
     if subprocess.run(["docker", "inspect", docker_image], capture_output=True).returncode != 0:
-        if subprocess.run(["docker", "pull", docker_image]).returncode != 0:
+        print(f"Docker image {docker_image} doesn't exsit, try to pull it.")
+        if subprocess.run(["docker", "pull", docker_image], capture_output=True).returncode != 0:
             print("Docker pull process failed!")
             sys.exit(1)
 
@@ -94,7 +95,7 @@ def parse_args():
                         type=str, required=True, nargs="+",
                         help="model names, e.g. 'Meta-Llama-3-8B-Instruct.Q8_0.gguf'")
     parser.add_argument("-d", "--docker_image",
-                        type=str, default="amperecomputingai/llama.cpp:latest",
+                        type=str, required=True,
                         help="Docker image to use for benchmarking")
     parser.add_argument("-t", "--num_threads",
                         type=int, required=True, nargs="+",
@@ -127,6 +128,7 @@ def main():
 
     args = parse_args()
     docker_image = args.docker_image
+    print(f"Test with docker image {docker_image}")
     benchmark(docker_init(args.numa), args)
 
 
