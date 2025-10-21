@@ -67,8 +67,8 @@ def benchmark(docker_container_name, args):
                     cmd = (f"cd /runner; python3 utils/benchmark.py -m models/{model} -n {str(num_processes)} "
                            f"-t {str(num_threads)} -b {str(batch_size)} -p {str(prompt_size)} -r {args.threads_range}")
 
-                    if args.fa != 0 :
-                        cmd += " -fa 1"
+                    if args.fa:
+                        cmd += " -fa"
 
                     cmd = ["docker", "exec", "-i", docker_container_name, "bash", "-c", cmd]
     
@@ -117,7 +117,7 @@ def parse_args():
                         type=int, default=0,
                         help="numa mode of the docker container")
     parser.add_argument("-fa",
-                        type=int, default=0, choices=range(0, 2),
+                        action="store_true",
                         help="enable flash attention")
 
     return parser.parse_args()
