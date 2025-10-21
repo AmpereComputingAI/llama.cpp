@@ -40,7 +40,7 @@ def parse_args():
                         type=str, default="local",
                         help="memory placement policy, 'local','interleave' or 'none'")
     parser.add_argument("-fa",
-                        type=int, default=0, choices=range(0,2),
+                        action="store_true",
                         help="enable flash attention")
     return parser.parse_args()
 
@@ -152,8 +152,10 @@ def main():
                        "/llm/llama-batched-bench", "-m", args.model, "-c", str(args.kv_cache), "-b", "2048", "-ub", "512", "-npp", str(args.prompt_size), "-ntg", str(args.tg_size),
                        "-npl", str(args.batch_size), "-t", str(args.num_threads), "-tb", str(args.num_threads), "--no-mmap"]
 
-            if args.fa != 0 :
-                cmd.append("--flash-attn")
+            if args.fa:
+                cmd += ["-fa", "on"]
+            else:
+                cmd += ["-fa", "off"]
 
         else:
             print("FAIL: batched-bench not found!")
