@@ -27,10 +27,10 @@ Provide run.py Python script with following arguments:
 - -b, batch size(s) to benchmark, meaning separate token generation streams handled as a single batch; multiple batch sizes can be provided and they will be treated as separate cases to benchmark
 - -p, prompt size(s) to benchmark, size of an input prompt; multiple prompt sizes can be provided and they will be treated as separate cases to benchmark
 - -r, thread-range, e.g., on an 80-thread system, it should be input as 0-79, unless user wants to use just a subset of available threads, say 16-63 (48 threads indexed 16<>63)
-- -fa, 0/1, disable/enable flash attention, default: 0
+- -fa, enable flash attention, default: disabled
 - -d, docker_image, docker image used for benchmarking, default: amperecomputingai/llama.cpp:latest
 ```bash
-python3 run.py -m Meta-Llama-3-8B-Instruct.Q8_0.gguf -t 10 16 32 40 64 80 -b 1 2 4 8 16 32 64 -p 512 -r 0-79 -fa 1 -d amperecomputingai/llama.cpp:3.2.1-ampereone
+python3 run.py -m llama-3.1-8b-instruct-Q8R16.gguf -t 10 16 32 40 64 80 -b 1 2 4 8 16 32 64 -p 512 -r 0-79 -fa -d amperecomputingai/llama.cpp:3.4.1
 ```
 
 ## Quick run on 80t OCI A1 system
