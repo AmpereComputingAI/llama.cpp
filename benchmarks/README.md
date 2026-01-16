@@ -16,7 +16,7 @@ Any GGUF model is expected to work, if you experience troubles running your netw
 Benchmarking script expects models to be placed under _**llama.cpp/benchmarks/models**_ dir.
 ```bash
 mkdir -p models
-hf download AmpereComputing/llama-3.1-8b-instruct-gguf llama-3.1-8b-instruct-Q8R16.gguf --local-dir models --local-dir-use-symlinks False
+hf download AmpereComputing/llama-3.1-8b-instruct-gguf llama-3.1-8b-instruct-Q8R16.gguf --local-dir models
 ```
 
 ## Benchmark
